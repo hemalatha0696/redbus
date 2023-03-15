@@ -103,5 +103,12 @@ namespace redbus.Helpers
             }
         }
 
+        public static String CurrentTestName()
+        {
+            string name = TestContext.CurrentContext.Test.Name;
+            Console.WriteLine("Name of the method - " + name);
+            return name;
+        }
+
     }
 }
