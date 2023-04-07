@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace redbus.Helpers
 {
@@ -74,23 +75,37 @@ namespace redbus.Helpers
             IList<IWebElement> allsublist = new List<IWebElement>(alllist);
             for (int i = 0; i < alllist.Count; i++)
             {
-                String paths = "C:\\Users\\al4104\\source\\repos\\redbus\\redbus\\Output\\" + path + "_operator.txt";
-                //using (FileStream fa = new FileStream(@paths, FileMode.Truncate, FileAccess.Write))
-                //{
-                //    //fa.Flush();
-                //    fa.Close();
-                //}
-                FileStream fs = new FileStream(@paths, FileMode.Append, FileAccess.Write, FileShare.Write);
-              
-                fs.Close();
+                //string startupPath = Directory.GetCurrentDirectory().Remove("\\redbus\\Output\\");
+                 //startupPath = null;
+                string workingDirectory = Environment.CurrentDirectory;
+                if (workingDirectory != null)
+                {
+                    String startupPath = Directory.GetParent(workingDirectory).Parent.Parent.FullName;
+                    if (!Directory.Exists(startupPath+"\\Output"))
+                    {
+                        Directory.CreateDirectory((startupPath + "\\Output"));
+                    }
+                    String paths = startupPath + "\\output\\" + path + "_operator.txt";
+                    DirectoryInfo di = Directory.CreateDirectory(path);
+                    Console.WriteLine("The directory was created successfully");
 
-                StreamWriter sw = new StreamWriter(@paths, true, Encoding.ASCII);
-                //Console.WriteLine(alllist[i].Text);
-                sw.Write(string.Empty);
-                JSExecutorHelper.jsjs(driver, alllist[i]);
-                sw.WriteLine(alllist[i].Text);                
-                sw.Close();
-                //File.Create(paths).Close();
+                    //using (FileStream fa = new FileStream(@paths, FileMode.Truncate, FileAccess.Write))
+                    //{
+                    //    //fa.Flush();
+                    //    fa.Close();
+                    //}
+                    FileStream fs = new FileStream(@paths, FileMode.Append, FileAccess.Write, FileShare.Write);
+
+                    fs.Close();
+
+                    StreamWriter sw = new StreamWriter(@paths, true, Encoding.ASCII);
+                    //Console.WriteLine(alllist[i].Text);
+                    sw.Write(string.Empty);
+                    JSExecutorHelper.jsjs(driver, alllist[i]);
+                    sw.WriteLine(alllist[i].Text);
+                    sw.Close();
+                    //File.Create(paths).Close();
+                }
             }
         }
         public static void switchtabs(IWebDriver driver)
